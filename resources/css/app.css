@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the news platform */
+@layer base {
+    body {
+        font-family: 'Figtree', sans-serif;
+    }
+}
+
+@layer components {
+    /* Custom button styles */
+    .btn-primary {
+        @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors;
+    }
+    
+    .btn-secondary {
+        @apply bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors;
+    }
+    
+    /* Article card styles */
+    .article-card {
+        @apply bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow;
+    }
+    
+    /* Navigation link active state */
+    .nav-link-active {
+        @apply text-blue-600 border-b-2 border-blue-600;
+    }
+}
+
+@layer utilities {
+    /* Custom text colors for the news theme */
+    .text-news-blue {
+        color: #1a365d;
+    }
+    
+    .text-news-gray {
+        color: #718096;
+    }
+    
+    .bg-news-light {
+        background-color: #f7fafc;
+    }
+}
