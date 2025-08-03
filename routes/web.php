@@ -24,12 +24,17 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Profile routes (provided by Breeze)
+// Profile routes (provided by Breeze + our extensions)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.picture.update');
+    Route::patch('/profile/additional', [ProfileController::class, 'updateAdditional'])->name('profile.additional.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Public profile routes (accessible to everyone)
+Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile.show');
 
 // Include authentication routes (provided by Breeze)
 require __DIR__.'/auth.php';

@@ -36,7 +36,11 @@
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
+                                <!-- User Avatar -->
+                                <img class="h-8 w-8 rounded-full object-cover mr-2" 
+                                     src="{{ Auth::user()->profile_picture_url }}" 
+                                     alt="{{ Auth::user()->name }}">
+                                <div>{{ Auth::user()->display_name }}</div>
 
                                 <div class="ml-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -47,8 +51,16 @@
                         </x-slot>
 
                         <x-slot name="content">
+                            <x-dropdown-link :href="route('profile.show', Auth::user()->username ?: Auth::user()->id)">
+                                {{ __('My Profile') }}
+                            </x-dropdown-link>
+
                             <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
+                                {{ __('Profile Settings') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('dashboard')">
+                                {{ __('Dashboard') }}
                             </x-dropdown-link>
 
                             <!-- Authentication -->
@@ -106,13 +118,24 @@
         @auth
             <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="flex items-center">
+                        <img class="h-10 w-10 rounded-full object-cover mr-3" 
+                             src="{{ Auth::user()->profile_picture_url }}" 
+                             alt="{{ Auth::user()->name }}">
+                        <div>
+                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mt-3 space-y-1">
+                    <x-responsive-nav-link :href="route('profile.show', Auth::user()->username ?: Auth::user()->id)">
+                        {{ __('My Profile') }}
+                    </x-responsive-nav-link>
+
                     <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Profile') }}
+                        {{ __('Profile Settings') }}
                     </x-responsive-nav-link>
 
                     <!-- Authentication -->

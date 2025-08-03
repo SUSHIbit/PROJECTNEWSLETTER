@@ -29,22 +29,32 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validate the incoming request
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username', 'alpha_dash'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'account_type' => ['required', 'in:personal,organization'],
         ]);
 
+        // Create the user
         $user = User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'account_type' => $request->account_type,
+            'last_active_at' => now(),
         ]);
 
+        // Fire the registered event
         event(new Registered($user));
 
+        // Login the user
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect to dashboard with success message
+        return redirect(route('dashboard', absolute: false))->with('success', 'Account created successfully! Welcome to our community.');
     }
 }
