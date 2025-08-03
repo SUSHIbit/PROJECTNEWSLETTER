@@ -19,6 +19,9 @@
                     <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
                         {{ __('News') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('organizations.index')" :active="request()->routeIs('organizations.*')">
+                        {{ __('Organizations') }}
+                    </x-nav-link>
                     @auth
                         <x-nav-link :href="route('follow.feed')" :active="request()->routeIs('follow.feed')">
                             {{ __('Feed') }}
@@ -78,6 +81,16 @@
                                 {{ __('My Posts') }}
                             </x-dropdown-link>
 
+                            <x-dropdown-link :href="route('organizations.index')">
+                                {{ __('Organizations') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('organizations.create')">
+                                {{ __('Create Organization') }}
+                            </x-dropdown-link>
+
+                            <div class="border-t border-gray-100"></div>
+
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Profile Settings') }}
                             </x-dropdown-link>
@@ -129,6 +142,9 @@
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
                 {{ __('News') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('organizations.index')" :active="request()->routeIs('organizations.*')">
+                {{ __('Organizations') }}
+            </x-responsive-nav-link>
             @auth
                 <x-responsive-nav-link :href="route('follow.feed')" :active="request()->routeIs('follow.feed')">
                     {{ __('Feed') }}
@@ -178,6 +194,14 @@
 
                     <x-responsive-nav-link :href="route('posts.my-posts')">
                         {{ __('My Posts') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('organizations.index')">
+                        {{ __('Organizations') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('organizations.create')">
+                        {{ __('Create Organization') }}
                     </x-responsive-nav-link>
 
                     <x-responsive-nav-link :href="route('profile.edit')">

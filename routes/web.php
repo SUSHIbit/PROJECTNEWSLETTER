@@ -6,6 +6,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\OrganizationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,26 @@ use Illuminate\Support\Facades\Route;
 
 // Home page route
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Organization routes that require authentication
+Route::middleware('auth')->group(function () {
+    Route::get('/organizations/create', [OrganizationController::class, 'create'])->name('organizations.create');
+    Route::post('/organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+    Route::get('/organizations/{slug}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
+    Route::put('/organizations/{slug}', [OrganizationController::class, 'update'])->name('organizations.update');
+    Route::delete('/organizations/{slug}', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
+    
+    // Organization member management routes
+    Route::get('/organizations/{slug}/invite', [OrganizationController::class, 'inviteForm'])->name('organizations.invite');
+    Route::post('/organizations/{slug}/members', [OrganizationController::class, 'inviteMember'])->name('organizations.member.invite');
+    Route::patch('/organizations/{slug}/members/{user}/role', [OrganizationController::class, 'updateMemberRole'])->name('organizations.member.role');
+    Route::delete('/organizations/{slug}/members/{user}', [OrganizationController::class, 'removeMember'])->name('organizations.member.remove');
+});
+
+// Public organization routes (accessible to everyone)
+Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
+Route::get('/organizations/{slug}', [OrganizationController::class, 'show'])->name('organizations.show');
+Route::get('/organizations/{slug}/members', [OrganizationController::class, 'members'])->name('organizations.members');
 
 // Post routes that require authentication
 Route::middleware('auth')->group(function () {
