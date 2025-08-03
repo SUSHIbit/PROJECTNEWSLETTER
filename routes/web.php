@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\FollowController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,11 +33,20 @@ Route::middleware('auth')->group(function () {
     // Like routes
     Route::post('/posts/{post}/like', [LikeController::class, 'togglePost'])->name('posts.like');
     Route::post('/comments/{comment}/like', [LikeController::class, 'toggleComment'])->name('comments.like');
+    
+    // Follow routes (Phase 6)
+    Route::post('/follow/{user}', [FollowController::class, 'toggle'])->name('follow.toggle');
+    Route::get('/discover', [FollowController::class, 'discover'])->name('follow.discover');
+    Route::get('/feed', [FollowController::class, 'feed'])->name('follow.feed');
 });
 
 // Public post routes (accessible to everyone) - these must come after auth routes
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
+// Public follow routes (accessible to everyone)
+Route::get('/users/{user}/followers', [FollowController::class, 'followers'])->name('follow.followers');
+Route::get('/users/{user}/following', [FollowController::class, 'following'])->name('follow.following');
 
 // Dashboard route (provided by Breeze)
 Route::get('/dashboard', function () {

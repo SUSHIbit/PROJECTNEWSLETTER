@@ -20,6 +20,12 @@
                         {{ __('News') }}
                     </x-nav-link>
                     @auth
+                        <x-nav-link :href="route('follow.feed')" :active="request()->routeIs('follow.feed')">
+                            {{ __('Feed') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('follow.discover')" :active="request()->routeIs('follow.discover')">
+                            {{ __('Discover') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                             {{ __('Create Post') }}
                         </x-nav-link>
@@ -58,6 +64,16 @@
                                 {{ __('My Profile') }}
                             </x-dropdown-link>
 
+                            <x-dropdown-link :href="route('follow.feed')">
+                                {{ __('My Feed') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('follow.discover')">
+                                {{ __('Discover People') }}
+                            </x-dropdown-link>
+
+                            <div class="border-t border-gray-100"></div>
+
                             <x-dropdown-link :href="route('posts.my-posts')">
                                 {{ __('My Posts') }}
                             </x-dropdown-link>
@@ -69,6 +85,8 @@
                             <x-dropdown-link :href="route('dashboard')">
                                 {{ __('Dashboard') }}
                             </x-dropdown-link>
+
+                            <div class="border-t border-gray-100"></div>
 
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
@@ -112,6 +130,12 @@
                 {{ __('News') }}
             </x-responsive-nav-link>
             @auth
+                <x-responsive-nav-link :href="route('follow.feed')" :active="request()->routeIs('follow.feed')">
+                    {{ __('Feed') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('follow.discover')" :active="request()->routeIs('follow.discover')">
+                    {{ __('Discover') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                     {{ __('Create Post') }}
                 </x-responsive-nav-link>
@@ -142,6 +166,14 @@
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('profile.show', Auth::user()->username ?: Auth::user()->id)">
                         {{ __('My Profile') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('follow.feed')">
+                        {{ __('My Feed') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('follow.discover')">
+                        {{ __('Discover People') }}
                     </x-responsive-nav-link>
 
                     <x-responsive-nav-link :href="route('posts.my-posts')">

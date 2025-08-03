@@ -44,8 +44,6 @@
         </div>
     </body>
 </html>
-// Add this script to your main layout file (layouts/app.blade.php) before closing </body> tag
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Handle like button clicks with AJAX
