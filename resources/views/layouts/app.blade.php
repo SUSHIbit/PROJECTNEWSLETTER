@@ -44,3 +44,66 @@
         </div>
     </body>
 </html>
+// Add this script to your main layout file (layouts/app.blade.php) before closing </body> tag
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle like button clicks with AJAX
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const form = this.closest('form');
+            const url = form.action;
+            const csrfToken = form.querySelector('[name="_token"]').value;
+            
+            // Disable button temporarily
+            this.disabled = true;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the button appearance
+                const icon = this.querySelector('svg');
+                const countSpan = this.querySelector('.like-count');
+                
+                if (data.liked) {
+                    // Liked - fill the heart
+                    icon.innerHTML = '<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>';
+                    icon.classList.add('text-red-600', 'fill-current');
+                    icon.classList.remove('text-gray-500');
+                } else {
+                    // Unliked - outline the heart
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>';
+                    icon.classList.remove('text-red-600', 'fill-current');
+                    icon.classList.add('text-gray-500');
+                    icon.setAttribute('fill', 'none');
+                    icon.setAttribute('stroke', 'currentColor');
+                }
+                
+                // Update count
+                if (countSpan) {
+                    countSpan.textContent = data.likes_count;
+                }
+                
+                // Re-enable button
+                this.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Re-enable button on error
+                this.disabled = false;
+                // Fallback to regular form submission
+                form.submit();
+            });
+        });
+    });
+});
+</script>

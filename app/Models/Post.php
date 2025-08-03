@@ -156,4 +156,23 @@ class Post extends Model
     {
         $this->increment('views');
     }
+
+        /**
+     * Check if this is a reply to another comment
+     */
+    public function isReply()
+    {
+        return !is_null($this->parent_id);
+    }
+
+    /**
+     * Load comments with their replies for display
+     */
+    public function loadCommentsWithReplies()
+    {
+        return $this->topLevelComments()
+                    ->with(['user', 'replies.user'])
+                    ->latest()
+                    ->get();
+    }
 }

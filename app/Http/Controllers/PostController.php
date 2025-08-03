@@ -14,8 +14,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        // Get all published posts with user information, ordered by latest first
-        $posts = Post::with('user')
+        // Get all published posts with user information and interaction counts
+        $posts = Post::with(['user'])
+                    ->withCount(['likes', 'comments'])
                     ->published()
                     ->latest()
                     ->paginate(10);
@@ -81,8 +82,10 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        // Find the post with user information
-        $post = Post::with('user')->findOrFail($id);
+        // Find the post with user information and interaction counts
+        $post = Post::with(['user'])
+                   ->withCount(['likes', 'comments'])
+                   ->findOrFail($id);
 
         // Only show published posts to non-owners
         if ($post->status !== 'published' && (!Auth::check() || Auth::id() !== $post->user_id)) {
@@ -101,6 +104,7 @@ class PostController extends Controller
     public function myPosts()
     {
         $posts = Post::where('user_id', Auth::id())
+                    ->withCount(['likes', 'comments'])
                     ->latest()
                     ->paginate(10);
 

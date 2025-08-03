@@ -275,4 +275,17 @@ class User extends Authenticatable
     {
         $this->update(['last_active_at' => now()]);
     }
+
+    /**
+     * Simple check if user has liked a post or comment
+     */
+    public function hasLikedSimple($model)
+    {
+        $modelClass = get_class($model);
+        
+        return \App\Models\Like::where('user_id', $this->id)
+            ->where('likeable_type', $modelClass)
+            ->where('likeable_id', $model->id)
+            ->exists();
+    }
 }

@@ -12,8 +12,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Get the latest 5 published posts for the home page
+        // Get the latest 5 published posts for the home page with interaction counts
         $posts = Post::with('user')
+                    ->withCount(['likes', 'comments'])
                     ->published()
                     ->latest()
                     ->take(5)
