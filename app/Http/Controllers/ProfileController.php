@@ -127,7 +127,7 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    /**
+/**
      * Show a user's public profile
      */
     public function show(Request $request, $username): View
@@ -136,6 +136,11 @@ class ProfileController extends Controller
         $user = \App\Models\User::where('username', $username)
                     ->orWhere('id', $username)
                     ->firstOrFail();
+
+        // Load the user's published posts relationship
+        $user->load(['publishedPosts' => function($query) {
+            $query->latest()->take(5);
+        }]);
 
         return view('profile.show', [
             'user' => $user,

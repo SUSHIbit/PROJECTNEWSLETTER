@@ -14,9 +14,18 @@ use Illuminate\Support\Facades\Route;
 // Home page route
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Post routes (some will require authentication later)
+// Post routes that require authentication
+Route::middleware('auth')->group(function () {
+    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('/my-posts', [PostController::class, 'myPosts'])->name('posts.my-posts');
+    Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+});
+
+// Public post routes (accessible to everyone) - these must come after auth routes
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create')->middleware('auth');
 Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 
 // Dashboard route (provided by Breeze)

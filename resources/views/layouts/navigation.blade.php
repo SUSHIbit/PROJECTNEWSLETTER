@@ -23,6 +23,9 @@
                         <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                             {{ __('Create Post') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('posts.my-posts')" :active="request()->routeIs('posts.my-posts')">
+                            {{ __('My Posts') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
@@ -53,6 +56,10 @@
                         <x-slot name="content">
                             <x-dropdown-link :href="route('profile.show', Auth::user()->username ?: Auth::user()->id)">
                                 {{ __('My Profile') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('posts.my-posts')">
+                                {{ __('My Posts') }}
                             </x-dropdown-link>
 
                             <x-dropdown-link :href="route('profile.edit')">
@@ -108,6 +115,9 @@
                 <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                     {{ __('Create Post') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('posts.my-posts')" :active="request()->routeIs('posts.my-posts')">
+                    {{ __('My Posts') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
@@ -132,6 +142,10 @@
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('profile.show', Auth::user()->username ?: Auth::user()->id)">
                         {{ __('My Profile') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('posts.my-posts')">
+                        {{ __('My Posts') }}
                     </x-responsive-nav-link>
 
                     <x-responsive-nav-link :href="route('profile.edit')">

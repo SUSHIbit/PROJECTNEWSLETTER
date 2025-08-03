@@ -32,43 +32,97 @@
                             
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="text-center p-4 bg-blue-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-blue-600">0</div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ Auth::user()->posts_count }}</div>
                                     <div class="text-sm text-blue-600">Posts</div>
                                 </div>
                                 <div class="text-center p-4 bg-green-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-green-600">0</div>
+                                    <div class="text-2xl font-bold text-green-600">{{ Auth::user()->followers_count }}</div>
                                     <div class="text-sm text-green-600">Followers</div>
                                 </div>
                                 <div class="text-center p-4 bg-purple-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-purple-600">0</div>
+                                    <div class="text-2xl font-bold text-purple-600">{{ Auth::user()->following_count }}</div>
                                     <div class="text-sm text-purple-600">Following</div>
                                 </div>
                             </div>
-                            
-                            <p class="text-sm text-gray-500 mt-4">
-                                These features will be available as we implement posts and social features in upcoming phases.
-                            </p>
                         </div>
                     </div>
                     
-                    <!-- Recent Activity -->
+                    <!-- Recent Posts -->
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-                            
-                            <div class="text-center py-8">
-                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                <h3 class="mt-2 text-sm font-medium text-gray-900">No activity yet</h3>
-                                <p class="mt-1 text-sm text-gray-500">Start by creating your first post or following other users.</p>
-                                <div class="mt-6">
-                                    <a href="{{ route('posts.create') }}" 
-                                       class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                                        Create Your First Post
-                                    </a>
-                                </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Your Recent Posts</h3>
+                                <a href="{{ route('posts.my-posts') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    View All →
+                                </a>
                             </div>
+                            
+                            @php
+                                $recentPosts = Auth::user()->posts()->latest()->take(3)->get();
+                            @endphp
+
+                            @if($recentPosts->count() > 0)
+                                <div class="space-y-4">
+                                    @foreach($recentPosts as $post)
+                                        <div class="border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-start justify-between">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center mb-2">
+                                                        @if($post->status === 'published')
+                                                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium mr-2">
+                                                                Published
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium mr-2">
+                                                                Draft
+                                                            </span>
+                                                        @endif
+                                                        @if($post->category)
+                                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                                                {{ ucfirst($post->category) }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <h4 class="font-medium text-gray-900 mb-1">
+                                                        <a href="{{ route('posts.show', $post->id) }}" class="hover:text-blue-600">
+                                                            {{ $post->title }}
+                                                        </a>
+                                                    </h4>
+                                                    <p class="text-sm text-gray-600 mb-2">{{ $post->excerpt(100) }}</p>
+                                                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                        @if($post->published_at)
+                                                            <span>{{ $post->published_at->diffForHumans() }}</span>
+                                                        @else
+                                                            <span>Updated {{ $post->updated_at->diffForHumans() }}</span>
+                                                        @endif
+                                                        <span>{{ $post->views }} {{ Str::plural('view', $post->views) }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex space-x-1 ml-4">
+                                                    <a href="{{ route('posts.edit', $post->id) }}" 
+                                                       class="text-xs px-2 py-1 text-yellow-600 border border-yellow-600 rounded hover:bg-yellow-50">
+                                                        Edit
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-center py-8">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    <h3 class="mt-2 text-sm font-medium text-gray-900">No posts yet</h3>
+                                    <p class="mt-1 text-sm text-gray-500">Start by creating your first post.</p>
+                                    <div class="mt-6">
+                                        <a href="{{ route('posts.create') }}" 
+                                           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                            Create Your First Post
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -167,20 +221,20 @@
                                     Create Post
                                 </a>
                                 
-                                <a href="{{ route('posts.index') }}" 
+                                <a href="{{ route('posts.my-posts') }}" 
                                    class="w-full inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"></path>
                                     </svg>
-                                    Browse News
+                                    My Posts
                                 </a>
                                 
-                                <a href="{{ route('home') }}" 
+                                <a href="{{ route('posts.index') }}" 
                                    class="w-full inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                                     </svg>
-                                    Home Feed
+                                    Browse News
                                 </a>
                             </div>
                         </div>

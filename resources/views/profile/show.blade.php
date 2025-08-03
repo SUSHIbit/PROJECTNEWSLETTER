@@ -23,7 +23,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h1 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h1>
-                                    @if($user->username)
+                                    @if(!empty($user->username))
                                         <p class="text-lg text-gray-600">@{{ $user->username }}</p>
                                     @endif
                                     
