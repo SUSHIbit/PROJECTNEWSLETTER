@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -35,11 +36,11 @@ class AdminController extends Controller
         $stats = [
             'total_users' => User::count(),
             'total_posts' => Post::count(),
-            'published_posts' => Post::published()->count(),
+            'published_posts' => Post::where('status', 'published')->count(),
             'draft_posts' => Post::where('status', 'draft')->count(),
             'total_comments' => Comment::count(),
             'total_organizations' => Organization::count(),
-            'pending_reports' => Report::pending()->count(),
+            'pending_reports' => Report::where('status', 'pending')->count(),
             'new_users_this_week' => User::where('created_at', '>=', now()->subWeek())->count(),
             'new_posts_this_week' => Post::where('created_at', '>=', now()->subWeek())->count(),
         ];
@@ -47,10 +48,10 @@ class AdminController extends Controller
         // Get recent activity
         $recent_users = User::latest()->take(5)->get();
         $recent_posts = Post::with('user')->latest()->take(5)->get();
-        $pending_reports = Report::with(['reporter', 'reportable'])->pending()->latest()->take(5)->get();
+        $pending_reports = Report::with(['reporter', 'reportable'])->where('status', 'pending')->latest()->take(5)->get();
 
         // Get popular posts (by views and interactions)
-        $popular_posts = Post::published()
+        $popular_posts = Post::where('status', 'published')
             ->withCount(['likes', 'comments'])
             ->orderByDesc('views')
             ->take(5)
@@ -283,9 +284,9 @@ class AdminController extends Controller
     }
 
     /**
-     * Analytics page
+     * Analytics page - SIMPLIFIED VERSION
      */
-    public function analytics()
+public function analytics()
     {
         $this->checkAdmin();
         
@@ -302,7 +303,7 @@ class AdminController extends Controller
         // Content statistics
         $content_stats = [
             'total_posts' => Post::count(),
-            'published_posts' => Post::published()->count(),
+            'published_posts' => Post::where('status', 'published')->count(),
             'draft_posts' => Post::where('status', 'draft')->count(),
             'posts_this_month' => Post::where('created_at', '>=', now()->subMonth())->count(),
             'total_comments' => Comment::count(),
@@ -312,31 +313,26 @@ class AdminController extends Controller
         // Popular categories
         $popular_categories = Post::select('category', DB::raw('COUNT(*) as count'))
             ->whereNotNull('category')
+            ->where('category', '!=', '')
             ->groupBy('category')
             ->orderByDesc('count')
             ->take(10)
             ->get();
 
         // Top authors
-        $top_authors = User::withCount('publishedPosts')
-            ->having('published_posts_count', '>', 0)
-            ->orderByDesc('published_posts_count')
+        $top_authors = User::withCount(['posts' => function($query) {
+                $query->where('status', 'published');
+            }])
+            ->having('posts_count', '>', 0)
+            ->orderByDesc('posts_count')
             ->take(10)
-            ->get();
-
-        // Daily registrations for the last 30 days
-        $daily_registrations = User::select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
-            ->where('created_at', '>=', now()->subDays(30))
-            ->groupBy('date')
-            ->orderBy('date')
             ->get();
 
         return view('admin.analytics', compact(
             'user_stats', 
             'content_stats', 
             'popular_categories', 
-            'top_authors', 
-            'daily_registrations'
+            'top_authors'
         ));
     }
 

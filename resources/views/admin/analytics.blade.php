@@ -133,7 +133,7 @@
                                                 <div class="text-xs text-gray-500">{{ $author->email }}</div>
                                             </div>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-900">{{ $author->published_posts_count }} posts</span>
+                                        <span class="text-sm font-medium text-gray-900">{{ $author->posts_count }} posts</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -141,34 +141,6 @@
                             <p class="text-gray-500 text-center py-4">No authors found</p>
                         @endif
                     </div>
-                </div>
-            </div>
-
-            <!-- Daily Registrations Chart - SIMPLIFIED -->
-            <div class="bg-white shadow rounded-lg">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Daily Registrations (Last 30 Days)</h3>
-                </div>
-                <div class="p-6">
-                    @if($daily_registrations->count() > 0)
-                        <div class="space-y-2">
-                            @foreach($daily_registrations as $day)
-                                <div class="flex items-center">
-                                    <div class="w-20 text-xs text-gray-500">
-                                        {{ date('M j', strtotime($day->date)) }}
-                                    </div>
-                                    <div class="flex-1 ml-4">
-                                        <div class="bg-gray-200 rounded-full h-3">
-                                            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ min(100, $day->count * 10) }}%"></div>
-                                        </div>
-                                    </div>
-                                    <div class="w-12 text-right text-sm font-medium text-gray-900">{{ $day->count }}</div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-gray-500 text-center py-4">No registration data available</p>
-                    @endif
                 </div>
             </div>
 
@@ -207,7 +179,7 @@
                            class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
-                            </svg>
+            </svg>
                             Settings
                         </a>
                     </div>
