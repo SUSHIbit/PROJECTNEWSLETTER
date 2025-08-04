@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'account_type',
+        'is_admin',
         'profile_picture',
         'bio',
         'location',
@@ -51,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'last_active_at' => 'datetime',
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -84,6 +86,22 @@ class User extends Authenticatable
     public function likes()
     {
         return $this->hasMany(Like::class);
+    }
+
+    /**
+     * Get all reports made by this user
+     */
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'reporter_id');
+    }
+
+    /**
+     * Get all reports reviewed by this user (if admin)
+     */
+    public function reviewedReports()
+    {
+        return $this->hasMany(Report::class, 'reviewed_by');
     }
 
     /**
@@ -269,6 +287,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is an admin
+     */
+    public function isAdmin()
+    {
+        return $this->is_admin === true;
+    }
+
+    /**
+     * Check if user can access admin panel
+     */
+    public function canAccessAdmin()
+    {
+        return $this->isAdmin();
+    }
+
+    /**
      * Update last active timestamp
      */
     public function updateLastActive()
@@ -287,5 +321,37 @@ class User extends Authenticatable
             ->where('likeable_type', $modelClass)
             ->where('likeable_id', $model->id)
             ->exists();
+    }
+
+    /**
+     * Scope to get only admin users
+     */
+    public function scopeAdmins($query)
+    {
+        return $query->where('is_admin', true);
+    }
+
+    /**
+     * Scope to get non-admin users
+     */
+    public function scopeNonAdmins($query)
+    {
+        return $query->where('is_admin', false);
+    }
+
+    /**
+     * Scope to get verified users
+     */
+    public function scopeVerified($query)
+    {
+        return $query->whereNotNull('email_verified_at');
+    }
+
+    /**
+     * Scope to get suspended users (using email_verified_at as suspension flag)
+     */
+    public function scopeSuspended($query)
+    {
+        return $query->whereNull('email_verified_at');
     }
 }

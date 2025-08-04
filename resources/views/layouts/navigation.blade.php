@@ -38,6 +38,13 @@
                         <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                             {{ __('Create Post') }}
                         </x-nav-link>
+                        
+                        {{-- Admin Navigation Link --}}
+                        @if(Auth::user()->isAdmin())
+                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                                <span class="text-red-600 font-semibold">{{ __('Admin') }}</span>
+                            </x-nav-link>
+                        @endif
                     @endauth
                 </div>
             </div>
@@ -68,7 +75,14 @@
                                 <img class="h-8 w-8 rounded-full object-cover mr-2" 
                                      src="{{ Auth::user()->profile_picture_url }}" 
                                      alt="{{ Auth::user()->name }}">
-                                <div>{{ Auth::user()->display_name }}</div>
+                                <div>
+                                    {{ Auth::user()->display_name }}
+                                    @if(Auth::user()->isAdmin())
+                                        <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Admin
+                                        </span>
+                                    @endif
+                                </div>
 
                                 <div class="ml-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -101,6 +115,10 @@
                                 {{ __('Discover People') }}
                             </x-dropdown-link>
 
+                            <x-dropdown-link :href="route('reports.my-reports')">
+                                {{ __('My Reports') }}
+                            </x-dropdown-link>
+
                             <div class="border-t border-gray-100"></div>
 
                             <x-dropdown-link :href="route('search.index')">
@@ -117,13 +135,46 @@
 
                             <div class="border-t border-gray-100"></div>
 
-                            <x-dropdown-link :href="route('organizations.index')">
+                            <x-dropout-link :href="route('organizations.index')">
                                 {{ __('Organizations') }}
                             </x-dropdown-link>
 
                             <x-dropdown-link :href="route('organizations.create')">
                                 {{ __('Create Organization') }}
                             </x-dropdown-link>
+
+                            {{-- Admin Dropdown Links --}}
+                            @if(Auth::user()->isAdmin())
+                                <div class="border-t border-gray-100"></div>
+                                
+                                <x-dropdown-link :href="route('admin.dashboard')" class="text-red-600 font-semibold">
+                                    {{ __('Admin Dashboard') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('admin.users')" class="text-red-600">
+                                    {{ __('Manage Users') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('admin.posts')" class="text-red-600">
+                                    {{ __('Manage Posts') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('admin.reports')" class="text-red-600">
+                                    {{ __('Review Reports') }}
+                                    @php
+                                        $pendingReports = \App\Models\Report::pending()->count();
+                                    @endphp
+                                    @if($pendingReports > 0)
+                                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            {{ $pendingReports }}
+                                        </span>
+                                    @endif
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('admin.analytics')" class="text-red-600">
+                                    {{ __('Analytics') }}
+                                </x-dropdown-link>
+                            @endif
 
                             <div class="border-t border-gray-100"></div>
 
@@ -210,6 +261,13 @@
                 <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                     {{ __('Create Post') }}
                 </x-responsive-nav-link>
+                
+                {{-- Admin Mobile Links --}}
+                @if(Auth::user()->isAdmin())
+                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                        <span class="text-red-600 font-semibold">{{ __('Admin Panel') }}</span>
+                    </x-responsive-nav-link>
+                @endif
             @endauth
         </div>
 
@@ -222,7 +280,14 @@
                              src="{{ Auth::user()->profile_picture_url }}" 
                              alt="{{ Auth::user()->name }}">
                         <div>
-                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-base text-gray-800">
+                                {{ Auth::user()->name }}
+                                @if(Auth::user()->isAdmin())
+                                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Admin
+                                    </span>
+                                @endif
+                            </div>
                             <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                         </div>
                     </div>
@@ -241,6 +306,10 @@
                         {{ __('Dashboard') }}
                     </x-responsive-nav-link>
 
+                    <x-responsive-nav-link :href="route('reports.my-reports')">
+                        {{ __('My Reports') }}
+                    </x-responsive-nav-link>
+
                     <x-responsive-nav-link :href="route('search.index')">
                         {{ __('Search') }}
                     </x-responsive-nav-link>
@@ -252,6 +321,29 @@
                     <x-responsive-nav-link :href="route('organizations.create')">
                         {{ __('Create Organization') }}
                     </x-responsive-nav-link>
+
+                    {{-- Admin Mobile Links --}}
+                    @if(Auth::user()->isAdmin())
+                        <x-responsive-nav-link :href="route('admin.dashboard')">
+                            <span class="text-red-600 font-semibold">{{ __('Admin Dashboard') }}</span>
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('admin.users')">
+                            <span class="text-red-600">{{ __('Manage Users') }}</span>
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('admin.posts')">
+                            <span class="text-red-600">{{ __('Manage Posts') }}</span>
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('admin.reports')">
+                            <span class="text-red-600">{{ __('Review Reports') }}</span>
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('admin.analytics')">
+                            <span class="text-red-600">{{ __('Analytics') }}</span>
+                        </x-responsive-nav-link>
+                    @endif
 
                     <x-responsive-nav-link :href="route('profile.edit')">
                         {{ __('Profile Settings') }}

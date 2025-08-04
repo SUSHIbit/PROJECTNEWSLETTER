@@ -8,6 +8,8 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -66,6 +68,41 @@ Route::middleware('auth')->group(function () {
     Route::post('/follow/{user}', [FollowController::class, 'toggle'])->name('follow.toggle');
     Route::get('/discover', [FollowController::class, 'discover'])->name('follow.discover');
     Route::get('/feed', [FollowController::class, 'feed'])->name('follow.feed');
+    
+    // Report routes (Phase 9) - Only authenticated users can report
+    Route::get('/report/post/{id}', [ReportController::class, 'reportPost'])->name('reports.post');
+    Route::get('/report/comment/{id}', [ReportController::class, 'reportComment'])->name('reports.comment');
+    Route::get('/report/user/{id}', [ReportController::class, 'reportUser'])->name('reports.user');
+    Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
+    Route::get('/my-reports', [ReportController::class, 'myReports'])->name('reports.my-reports');
+});
+
+// Admin routes (Phase 9) - Using auth middleware and internal admin check
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    // Admin Dashboard
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // User Management
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/users/{id}', [AdminController::class, 'showUser'])->name('users.show');
+    Route::post('/users/{id}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('users.toggle-admin');
+    Route::post('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
+    
+    // Post Management
+    Route::get('/posts', [AdminController::class, 'posts'])->name('posts');
+    Route::get('/posts/{id}', [AdminController::class, 'showPost'])->name('posts.show');
+    Route::delete('/posts/{id}', [AdminController::class, 'deletePost'])->name('posts.delete');
+    
+    // Reports Management
+    Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
+    Route::get('/reports/{id}', [AdminController::class, 'showReport'])->name('reports.show');
+    Route::patch('/reports/{id}', [AdminController::class, 'updateReport'])->name('reports.update');
+    
+    // Analytics
+    Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
+    
+    // Settings
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 });
 
 // Public post routes (accessible to everyone) - these must come after auth routes
