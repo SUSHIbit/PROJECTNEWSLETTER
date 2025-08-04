@@ -135,7 +135,7 @@
 
                             <div class="border-t border-gray-100"></div>
 
-                            <x-dropout-link :href="route('organizations.index')">
+                            <x-dropdown-link :href="route('organizations.index')">
                                 {{ __('Organizations') }}
                             </x-dropdown-link>
 

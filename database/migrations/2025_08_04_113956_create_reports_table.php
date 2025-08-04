@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('reporter_id')->constrained('users')->onDelete('cascade');
-            $table->morphs('reportable'); // Can report posts, comments, or users
+            
+            // Use morphs() which automatically creates the index - don't add manual index
+            $table->morphs('reportable'); // This creates reportable_type, reportable_id AND the index
+            
             $table->enum('reason', ['spam', 'inappropriate', 'harassment', 'fake_news', 'copyright', 'other']);
             $table->text('description')->nullable();
             $table->enum('status', ['pending', 'reviewed', 'resolved', 'dismissed'])->default('pending');
@@ -23,9 +26,10 @@ return new class extends Migration
             $table->timestamp('reviewed_at')->nullable();
             $table->timestamps();
             
-            // Add indexes for better performance
+            // Add only the additional indexes you need (morphs() already creates the main one)
             $table->index(['status', 'created_at']);
-            $table->index(['reportable_type', 'reportable_id']);
+            // Remove this line: $table->index(['reportable_type', 'reportable_id']); 
+            // because morphs() already creates it
         });
     }
 
