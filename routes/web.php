@@ -7,6 +7,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Route;
 
 // Home page route
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Search routes (Phase 8)
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+Route::get('/trending', [SearchController::class, 'trending'])->name('search.trending');
+Route::get('/explore', [SearchController::class, 'explore'])->name('search.explore');
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 
 // Organization routes that require authentication
 Route::middleware('auth')->group(function () {

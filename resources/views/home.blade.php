@@ -11,7 +11,37 @@
             <!-- Hero Section -->
             <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                 <h1 class="text-3xl font-bold text-news-blue mb-2">Welcome to {{ config('app.name') }}</h1>
-                <p class="text-gray-600 text-lg">Stay informed with the latest news and stories from around the world.</p>
+                <p class="text-gray-600 text-lg mb-4">Stay informed with the latest news and stories from around the world.</p>
+                
+                <!-- Quick Search -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <form action="{{ route('search.index') }}" method="GET" class="flex space-x-3">
+                        <input type="text" 
+                               name="q" 
+                               placeholder="Search posts, users, or topics..." 
+                               class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <button type="submit" 
+                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                    <div class="flex space-x-4 mt-3">
+                        <a href="{{ route('search.trending') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            🔥 Trending
+                        </a>
+                        <a href="{{ route('search.explore') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            🌟 Explore
+                        </a>
+                        <a href="{{ route('search.index', ['category' => 'technology']) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            💻 Technology
+                        </a>
+                        <a href="{{ route('search.index', ['category' => 'politics']) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            🏛️ Politics
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <!-- Latest Posts -->
@@ -43,9 +73,10 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex space-x-4 text-sm text-gray-500">
                                         @if($post->category)
-                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                            <a href="{{ route('search.index', ['category' => $post->category]) }}" 
+                                               class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium hover:bg-blue-200 transition-colors">
                                                 {{ ucfirst($post->category) }}
-                                            </span>
+                                            </a>
                                         @endif
                                         <span>{{ $post->views }} {{ Str::plural('view', $post->views) }}</span>
                                         <span>{{ $post->reading_time }}</span>
@@ -141,22 +172,87 @@
 
         <!-- Sidebar -->
         <div class="space-y-6">
-            <!-- Trending Topics (Placeholder) -->
+            
+            <!-- Search & Discovery -->
             <div class="bg-white rounded-lg shadow-sm p-6">
-                <h3 class="font-bold text-lg text-gray-900 mb-4">Trending Topics</h3>
-                <div class="space-y-2">
-                    @foreach(['Technology', 'Politics', 'Sports', 'Health', 'Science'] as $topic)
-                        <a href="{{ route('posts.index') }}?category={{ strtolower($topic) }}" 
-                           class="block text-blue-600 hover:text-blue-800 text-sm">
-                            #{{ $topic }}
-                        </a>
-                    @endforeach
+                <h3 class="font-bold text-lg text-gray-900 mb-4">🔍 Discover</h3>
+                <div class="space-y-3">
+                    <a href="{{ route('search.trending') }}" 
+                       class="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-center py-2 px-4 rounded-lg hover:from-orange-600 hover:to-red-600 transition-colors font-medium">
+                        🔥 Trending Posts
+                    </a>
+                    <a href="{{ route('search.explore') }}" 
+                       class="block w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-colors font-medium">
+                        🌟 Explore Community
+                    </a>
+                    <a href="{{ route('search.index') }}" 
+                       class="block w-full bg-gray-100 text-gray-700 text-center py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                        Advanced Search
+                    </a>
                 </div>
             </div>
 
+            <!-- Trending Categories -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="font-bold text-lg text-gray-900 mb-4">📂 Browse by Category</h3>
+                <div class="space-y-2">
+                    @foreach(['technology', 'politics', 'sports', 'health', 'science', 'business', 'entertainment'] as $category)
+                        <a href="{{ route('search.index', ['category' => $category]) }}" 
+                           class="block text-blue-600 hover:text-blue-800 text-sm py-1 px-2 rounded hover:bg-blue-50 transition-colors">
+                            {{ ucfirst($category) }}
+                        </a>
+                    @endforeach
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <a href="{{ route('search.index') }}" 
+                       class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View all categories →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Popular Hashtags -->
+            @php
+                // Get some sample hashtags from recent posts
+                $recentPosts = \App\Models\Post::published()
+                    ->where('published_at', '>=', now()->subDays(7))
+                    ->pluck('content');
+                
+                $hashtags = [];
+                foreach ($recentPosts as $content) {
+                    preg_match_all('/#([a-zA-Z0-9_]+)/', $content, $matches);
+                    foreach ($matches[1] as $hashtag) {
+                        $hashtag = strtolower($hashtag);
+                        if (isset($hashtags[$hashtag])) {
+                            $hashtags[$hashtag]++;
+                        } else {
+                            $hashtags[$hashtag] = 1;
+                        }
+                    }
+                }
+                arsort($hashtags);
+                $topHashtags = array_slice($hashtags, 0, 6, true);
+            @endphp
+
+            @if(!empty($topHashtags))
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="font-bold text-lg text-gray-900 mb-4">🏷️ Trending Hashtags</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($topHashtags as $hashtag => $count)
+                            <a href="{{ route('search.index', ['hashtag' => $hashtag]) }}" 
+                               class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition-colors">
+                                #{{ $hashtag }}
+                                <span class="ml-1 text-xs">{{ $count }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <!-- Quick Actions -->
             <div class="bg-white rounded-lg shadow-sm p-6">
-                <h3 class="font-bold text-lg text-gray-900 mb-4">Quick Actions</h3>
+                <h3 class="font-bold text-lg text-gray-900 mb-4">🚀 Quick Actions</h3>
                 <div class="space-y-3">
                     @auth
                         <a href="{{ route('posts.create') }}" class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
@@ -164,6 +260,9 @@
                         </a>
                         <a href="{{ route('posts.my-posts') }}" class="block w-full bg-gray-100 text-gray-700 text-center py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
                             My Posts
+                        </a>
+                        <a href="{{ route('follow.discover') }}" class="block w-full bg-gray-100 text-gray-700 text-center py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                            Discover People
                         </a>
                         <a href="{{ route('dashboard') }}" class="block w-full bg-gray-100 text-gray-700 text-center py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
                             Dashboard
@@ -182,7 +281,7 @@
             <!-- Recent Stats -->
             @if($posts->count() > 0)
                 <div class="bg-white rounded-lg shadow-sm p-6">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4">Community Stats</h3>
+                    <h3 class="font-bold text-lg text-gray-900 mb-4">📊 Community Stats</h3>
                     <div class="space-y-3">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Total Posts</span>
@@ -204,6 +303,13 @@
                             <span class="text-gray-600">Total Likes</span>
                             <span class="font-semibold">{{ \App\Models\Like::count() }}</span>
                         </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <a href="{{ route('search.explore') }}" 
+                           class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            View detailed stats →
+                        </a>
                     </div>
                 </div>
             @endif

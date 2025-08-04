@@ -19,6 +19,12 @@
                     <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
                         {{ __('News') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('search.trending')" :active="request()->routeIs('search.trending')">
+                        {{ __('Trending') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('search.explore')" :active="request()->routeIs('search.explore')">
+                        {{ __('Explore') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('organizations.index')" :active="request()->routeIs('organizations.*')">
                         {{ __('Organizations') }}
                     </x-nav-link>
@@ -32,14 +38,24 @@
                         <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                             {{ __('Create Post') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('posts.my-posts')" :active="request()->routeIs('posts.my-posts')">
-                            {{ __('My Posts') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
                     @endauth
                 </div>
+            </div>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
+                <form action="{{ route('search.index') }}" method="GET" class="relative mr-4">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search..." 
+                           value="{{ request('q') }}"
+                           class="w-64 px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </form>
             </div>
 
             <!-- Settings Dropdown -->
@@ -67,6 +83,16 @@
                                 {{ __('My Profile') }}
                             </x-dropdown-link>
 
+                            <x-dropdown-link :href="route('posts.my-posts')">
+                                {{ __('My Posts') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-dropdown-link>
+
+                            <div class="border-t border-gray-100"></div>
+
                             <x-dropdown-link :href="route('follow.feed')">
                                 {{ __('My Feed') }}
                             </x-dropdown-link>
@@ -77,9 +103,19 @@
 
                             <div class="border-t border-gray-100"></div>
 
-                            <x-dropdown-link :href="route('posts.my-posts')">
-                                {{ __('My Posts') }}
+                            <x-dropdown-link :href="route('search.index')">
+                                {{ __('Search') }}
                             </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('search.trending')">
+                                {{ __('Trending') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('search.explore')">
+                                {{ __('Explore') }}
+                            </x-dropdown-link>
+
+                            <div class="border-t border-gray-100"></div>
 
                             <x-dropdown-link :href="route('organizations.index')">
                                 {{ __('Organizations') }}
@@ -94,12 +130,6 @@
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Profile Settings') }}
                             </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('dashboard')">
-                                {{ __('Dashboard') }}
-                            </x-dropdown-link>
-
-                            <div class="border-t border-gray-100"></div>
 
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
@@ -135,12 +165,37 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        
+        <!-- Mobile Search -->
+        <div class="pt-2 pb-3 border-b border-gray-200">
+            <div class="px-4">
+                <form action="{{ route('search.index') }}" method="GET" class="relative">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search..." 
+                           value="{{ request('q') }}"
+                           class="w-full px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
                 {{ __('Home') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
                 {{ __('News') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('search.trending')" :active="request()->routeIs('search.trending')">
+                {{ __('Trending') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('search.explore')" :active="request()->routeIs('search.explore')">
+                {{ __('Explore') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('organizations.index')" :active="request()->routeIs('organizations.*')">
                 {{ __('Organizations') }}
@@ -154,12 +209,6 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                     {{ __('Create Post') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('posts.my-posts')" :active="request()->routeIs('posts.my-posts')">
-                    {{ __('My Posts') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
                 </x-responsive-nav-link>
             @endauth
         </div>
@@ -184,16 +233,16 @@
                         {{ __('My Profile') }}
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link :href="route('follow.feed')">
-                        {{ __('My Feed') }}
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('follow.discover')">
-                        {{ __('Discover People') }}
-                    </x-responsive-nav-link>
-
                     <x-responsive-nav-link :href="route('posts.my-posts')">
                         {{ __('My Posts') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('search.index')">
+                        {{ __('Search') }}
                     </x-responsive-nav-link>
 
                     <x-responsive-nav-link :href="route('organizations.index')">
